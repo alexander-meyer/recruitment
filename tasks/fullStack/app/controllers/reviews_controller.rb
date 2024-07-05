@@ -3,16 +3,22 @@ class ReviewsController < ApplicationController
   DEFAULT_TAGS = ['default']
 
   def index
-    if params[:shop_id].present? && Shop.where("id = #{params[:shop_id]}").present?
-      params[:per_page] ||= 10
-      offset = params[:page].to_i * params[:per_page]
+    params[:per_page] ||= 10
+    offset = params[:page].to_i * params[:per_page]
 
-      @data = []
-      products = Product.where("shop_id = #{params[:shop_id]}").sort_by(&:created_at)[offset..(offset + params[:per_page])]
-      products.each do |product|
-        reviews = product.reviews.sort_by(&:created_at)[offset..(offset + params[:per_page])]
-        @data << { product: product, reviews: reviews }
-      end
+    products_query = Product.includes(:reviews).order(created_at: :desc)
+    products_query = products_query.where(shop_id: params[:shop_id].to_i) if params[:shop_id].present?
+
+    products = products_query.limit(params[:per_page].to_i).offset(offset)
+    product_ids = products.pluck(:id)
+
+    reviews = Review.where(product_id: product_ids).group_by(&:product_id)
+
+    @data = products.map do |product|
+      {
+        product: product,
+        reviews: reviews[product.id].try(:sort_by, &:created_at).try(:first, 3) || []
+      }
     end
   end
 
