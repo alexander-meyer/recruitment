@@ -1,31 +1,31 @@
-= form_for(@review) do |f|
-  div.fields-container
-    .field
-      label for="shop_id" Shop
+= form_for(@review, html: { class: "review-form" }) do |f|
+  .review-form-selectors 
+    .review-form-selectors-field
+      label.review-form-field-label for="shop_id" Shop
       select name="shop_id" id="shop_select"
         option[value=""] -- Select Shop --
         - @shops.each do |shop|
           option[value="#{shop.id}"] #{shop.name}
     
-    .field
-      = f.label :product_id, 'Product'
+    .review-form-selectors-field
+      = f.label :product_id, 'Product', class: "review-form-field-label"
       = f.collection_select :product_id, [], :id, :name, {include_blank: '-- Select Product --'}, {id: "product_select"}
       span#loadingMessage
 
-    .field
-      = f.label :rating, 'Rating'
-      #ratingContainer
-        - (1..5).each do |star|
-          span.star[data-rating="#{star}"] ☆
-      = f.hidden_field :rating, id: "rating"
+  .field
+    = f.label :rating, 'Rating', class: "review-form-field-label"
+    #ratingContainer
+      - (1..5).each do |star|
+        span.star[data-rating="#{star}"] ☆
+    = f.hidden_field :rating, id: "rating"
 
-    .field
-      = f.label :reviewer_name, "Name"
-      = f.text_field :reviewer_name, id: "reviewer_name"
-    
-    .field
-      = f.label :body, "Review"
-      = f.text_area :body, id: "body"
+  .field
+    = f.label :reviewer_name, "Name", class: "review-form-field-label"
+    = f.text_field :reviewer_name, id: "reviewer_name", class: "text-input", placeholder: "Enter your name"
+  
+  .field
+    = f.label :body, "Review", class: "review-form-field-label"
+    = f.text_area :body, id: "body", class: "text-input", placeholder: "Write your review here"
   
   .actions
-    = f.submit "Submit Review"
+    = f.submit "Submit Review", class: "review-form-button"

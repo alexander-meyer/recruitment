@@ -1,0 +1,72 @@
+/* app/assets/stylesheets/reviews.css */
+
+.review-form {
+  margin: auto;
+  margin-top: 3em;
+  background: #f2f2f2;
+  width: 80%;
+  font-family: 'roboto', sans-serif;
+}
+
+.review-form-field-label {
+  color: rgb(101, 101, 101);
+  font-weight: 500;
+}
+
+.review-form-selectors {
+  display: flex;
+  gap: 5em;
+}
+
+.review-form-selectors-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  margin: 1em;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin: 0 1em 1em 1em;
+}
+
+.star {
+  font-size: 20px;
+  color: gold;
+  cursor: pointer;
+}
+
+.text-input {
+  font-family: 'roboto', sans-serif;
+  font-size: 14px;
+  padding: 10px 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.text-input:focus {
+  border-color: #007BFF;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+}
+
+.text-input::placeholder {
+  color: #aaa;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+.review-form-button {
+  font-family: 'roboto', sans-serif;
+  margin: 1em;
+  background-color: hsl(236, 77%, 47%);
+  color: white;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
