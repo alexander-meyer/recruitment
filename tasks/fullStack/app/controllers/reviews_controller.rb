@@ -20,10 +20,17 @@ class ReviewsController < ApplicationController
     # TODO: Create reviews in background. No need to show errors (if any) to users, it's fine to skip creating the review silently when some validations fail.
 
     tags = tags_with_default(params)
-    Review.create(product_id: params[:product_id], body: params[:body], rating: params[:rating], reviewer_name: params[:reviewer_name], tags: tags)
+
+    CreateReviewWorker.perform_async({
+      "product_id" => params[:review][:product_id].to_i,
+      "body" => params[:review][:body],
+      "rating" => params[:review][:rating].to_i,
+      "reviewer_name" => params[:review][:reviewer_name],
+      "tags" => tags.map(&:to_s)
+    })
 
     flash[:notice] = 'Review is being created in background. It might take a moment to show up'
-    redirect_to action: :index, shop_id: Product.find_by(id: params[:product_id]).shop_id
+    redirect_to action: :index, shop_id: params[:shop_id]
   end
 
   def new
@@ -41,9 +48,11 @@ class ReviewsController < ApplicationController
   #  - Else (if the shop doesn't have any `tags`), the default tags (in constant `DEFAULT_TAGS`) should be part of the review's `tags`
   # One may wonder what an odd logic and lenthy comment, thus may suspect something hidden here, an easter egg perhaps.
   def tags_with_default(params)
-    product = Product.find_by(id: params[:product_id])
-    default_tags = product.shop.tags || DEFAULT_TAGS
-    default_tags.concat(params[:tags].split(',')).uniq
+    shop = Shop.find_by(id: params[:shop_id])
+    default_tags = shop.tags || DEFAULT_TAGS
+    # TODO: Assuming params[:tags] is coming from the front-end, we will want to check these for security purposes (e.g. SQL injection, XSS, etc.)
+    review_tags = params[:tags]&.split(',').to_a
+    default_tags.concat(review_tags).uniq
   end
 
 end
