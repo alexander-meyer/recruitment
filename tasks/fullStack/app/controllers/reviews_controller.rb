@@ -55,10 +55,16 @@ class ReviewsController < ApplicationController
   # One may wonder what an odd logic and lenthy comment, thus may suspect something hidden here, an easter egg perhaps.
   def tags_with_default(params)
     shop = Shop.find_by(id: params[:shop_id])
-    default_tags = shop.tags || DEFAULT_TAGS
-    # TODO: Assuming params[:tags] is coming from the front-end, we will want to check these for security purposes (e.g. SQL injection, XSS, etc.)
-    review_tags = params[:tags]&.split(',').to_a
-    default_tags.concat(review_tags).uniq
+    default_tags = shop&.tags || DEFAULT_TAGS
+  
+    review_tags = sanitize_tags(params[:tags])
+    
+    (default_tags + review_tags).uniq
+  end
+
+  def sanitize_tags(tags_string)
+    return [] unless tags_string
+    tags_string.split(',').map { |tag| tag.strip.gsub(/[^0-9a-zA-Z \-_]+/, '') }
   end
 
 end
