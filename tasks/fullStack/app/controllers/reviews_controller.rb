@@ -26,6 +26,11 @@ class ReviewsController < ApplicationController
     redirect_to action: :index, shop_id: Product.find_by(id: params[:product_id]).shop_id
   end
 
+  def new
+    @shops = Shop.order(:name)
+    @review = Review.new
+  end
+
   private
 
   # Prepend `params[:tags]` with tags of the shop (if present) or DEFAULT_TAGS
